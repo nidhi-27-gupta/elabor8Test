@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "a319f29d-5668-4cfd-b5d6-03a990e1f09a",
+		"name": "API_test_using_data_set",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get facts details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Getting details for fact id\", () => {\r",
+							"    console.log(pm.iterationData.get('_id'));\r",
+							"    var responseCode = pm.response.code;\r",
+							"\r",
+							"    if (responseCode == 200) {\r",
+							"        console.log('fact found');\r",
+							"        var responseBody = pm.response.json();\r",
+							"        pm.expect(responseBody).to.have.property('user');\r",
+							"        pm.expect(responseBody.user._id).to.eql(pm.iterationData.get('user.id'));\r",
+							"    }\r",
+							"    else if (responseCode == 404) { \r",
+							"        var responseBody = pm.response.json();\r",
+							"        pm.expect(responseBody).to.have.property('message');\r",
+							"        pm.expect(responseBody.message).to.equal('Fact not found')\r",
+							"    }\r",
+							"    else {\r",
+							"        pm.expect.fail(`Request failed unexpectedly with response code ${responseCode}`)\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/facts/{{_id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"facts",
+						"{{_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var isResponseCodeEquals = (expectedCode) => {",
+					"    var isSuccess = false;",
+					"    if (pm.response.code == expectedCode) {",
+					"        isSuccess = true;",
+					"    }",
+					"    else {",
+					"        console.log(pm.response.text());",
+					"    }",
+					"    return isSuccess;",
+					"}",
+					"pm.environment.set(\"isResponseCodeEquals\", isResponseCodeEquals.toString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://cat-fact.herokuapp.com",
+			"type": "string"
+		}
+	]
+}
